@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wyj.dao.UserMapper">
+	<select id="getObjectById" parameterType="java.lang.Long" resultType="com.wyj.entity.User">
+		SELECT * FROM user WHERE
+		userId=#{value}
+	</select>
+	
+	<insert id="save" parameterType="com.wyj.entity.User" useGeneratedKeys="true" keyProperty="userId">
+		INSERT INTO
+		user(userName,sex,phone,email,address)
+		VALUES
+		(#{userName},#{sex},#{phone},#{email},#{address})
+	</insert>
+
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			user
+		WHERE
+			userId IN
+		<foreach item="userId" collection="array" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+	</delete>
+
+	<update id="update" parameterType="com.wyj.entity.User">
+		UPDATE user SET
+		userName=#{userName},sex=#{sex},phone=#{phone},email=#{email},address=#{address}
+		WHERE userId = #{userId}
+	</update>
+	
+	<select id="list" parameterType="com.wyj.entity.User" resultMap="userMap">
+		SELECT * FROM user
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="userName != null">
+				AND userName = #{userName}
+			</if>
+		</trim>
+	</select>
+	<resultMap type="com.wyj.entity.User" id="userMap">
+		<id property="userId" column="userId" />
+		<result property="userName" column="userName" />
+		<result property="sex" column="sex" />
+		<result property="phone" column="phone" />
+		<result property="email" column="email" />
+		<result property="address" column="address" />
+	</resultMap>
+	
+</mapper>
